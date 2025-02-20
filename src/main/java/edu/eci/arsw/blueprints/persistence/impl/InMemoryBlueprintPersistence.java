@@ -1,49 +1,51 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
 package edu.eci.arsw.blueprints.persistence.impl;
 
 import edu.eci.arsw.blueprints.model.Blueprint;
-import edu.eci.arsw.blueprints.model.Point;
 import edu.eci.arsw.blueprints.persistence.BlueprintNotFoundException;
 import edu.eci.arsw.blueprints.persistence.BlueprintPersistenceException;
 import edu.eci.arsw.blueprints.persistence.BlueprintsPersistence;
-import java.util.HashMap;
-import java.util.Map;
+import org.springframework.stereotype.Repository;
 
-/**
- *
- * @author hcadavid
- */
-public class InMemoryBlueprintPersistence implements BlueprintsPersistence{
+import java.util.*;
 
-    private final Map<Tuple<String,String>,Blueprint> blueprints=new HashMap<>();
+@Repository
+public class InMemoryBlueprintPersistence implements BlueprintsPersistence {
+    private final Map<String, Set<Blueprint>> blueprints = new HashMap<>();
 
-    public InMemoryBlueprintPersistence() {
-        //load stub data
-        Point[] pts=new Point[]{new Point(140, 140),new Point(115, 115)};
-        Blueprint bp=new Blueprint("_authorname_", "_bpname_ ",pts);
-        blueprints.put(new Tuple<>(bp.getAuthor(),bp.getName()), bp);
-        
-    }    
-    
     @Override
     public void saveBlueprint(Blueprint bp) throws BlueprintPersistenceException {
-        if (blueprints.containsKey(new Tuple<>(bp.getAuthor(),bp.getName()))){
-            throw new BlueprintPersistenceException("The given blueprint already exists: "+bp);
+        Set<Blueprint> authorBlueprints = blueprints.get(bp.getAuthor());
+        if (authorBlueprints != null) {
+            for (Blueprint existingBp : authorBlueprints) {
+                if (existingBp.getName().equals(bp.getName())) {
+                    throw new BlueprintPersistenceException("El blueprint '" + bp.getName() + "' ya existe.");
+                }
+            }
         }
-        else{
-            blueprints.put(new Tuple<>(bp.getAuthor(),bp.getName()), bp);
-        }        
+        blueprints.computeIfAbsent(bp.getAuthor(), k -> new HashSet<>()).add(bp);
     }
 
     @Override
-    public Blueprint getBlueprint(String author, String bprintname) throws BlueprintNotFoundException {
-        return blueprints.get(new Tuple<>(author, bprintname));
+    public Blueprint getBlueprint(String author, String name) throws BlueprintNotFoundException {
+        return blueprints.getOrDefault(author, Collections.emptySet())
+                .stream()
+                .filter(bp -> bp.getName().equals(name))
+                .findFirst()
+                .orElseThrow(() -> new BlueprintNotFoundException("Blueprint no encontrado"));
     }
 
-    
-    
+    @Override
+    public Set<Blueprint> getBlueprintsByAuthor(String author) throws BlueprintNotFoundException {
+        if (!blueprints.containsKey(author)) {
+            throw new BlueprintNotFoundException("No existen blueprints para el autor: " + author);
+        }
+        return blueprints.get(author);
+    }
+
+    @Override
+    public Set<Blueprint> getAllBlueprints() {
+        Set<Blueprint> allBlueprints = new HashSet<>();
+        blueprints.values().forEach(allBlueprints::addAll);
+        return allBlueprints;
+    }
 }

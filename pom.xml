@@ -9,7 +9,6 @@
     <packaging>jar</packaging>
 
     <name>Blueprints_Middleware</name>
-    
 
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
@@ -20,16 +19,28 @@
     </properties>
 
     <dependencies>
-        <dependency>
-            <groupId>org.springframework</groupId>
-            <artifactId>spring-core</artifactId>
-            <version>4.2.4.RELEASE</version>
-        </dependency>
+        <!-- Spring Context (incluye Spring Core) -->
         <dependency>
             <groupId>org.springframework</groupId>
             <artifactId>spring-context</artifactId>
             <version>4.2.4.RELEASE</version>
         </dependency>
+
+        <!-- Spring Beans (manejo de dependencias) -->
+        <dependency>
+            <groupId>org.springframework</groupId>
+            <artifactId>spring-beans</artifactId>
+            <version>4.2.4.RELEASE</version>
+        </dependency>
+
+        <!-- Spring AOP (necesario para ciertas inyecciones de Spring) -->
+        <dependency>
+            <groupId>org.springframework</groupId>
+            <artifactId>spring-aop</artifactId>
+            <version>4.2.4.RELEASE</version>
+        </dependency>
+
+        <!-- JUnit para pruebas -->
         <dependency>
             <groupId>junit</groupId>
             <artifactId>junit</artifactId>

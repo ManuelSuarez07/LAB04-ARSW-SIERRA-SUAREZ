@@ -1,16 +1,9 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
 package edu.eci.arsw.blueprints.model;
 
-/**
- *
- * @author hcadavid
- */
+import java.util.Objects;
+
 public class Point {
-   
+
     private int x;
     private int y;
 
@@ -20,8 +13,8 @@ public class Point {
     }
 
     public Point() {
-    }    
-    
+    }
+
     public int getX() {
         return x;
     }
@@ -37,7 +30,18 @@ public class Point {
     public void setY(int y) {
         this.y = y;
     }
-    
-    
-    
+
+    @Override
+    public boolean equals(Object obj) {
+        if (this == obj) return true;
+        if (obj == null || getClass() != obj.getClass()) return false;
+        Point other = (Point) obj;
+        return x == other.x && y == other.y; 
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(x, y);
+    }
 }
+
