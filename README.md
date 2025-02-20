@@ -1,6 +1,8 @@
 ## Escuela Colombiana de Ingeniería
 
 ## Arquitecturas de Software
+* Yeltzyn Sierra
+* Manuel Suarez
 
 # Componentes y conectores - Parte I.
 
